@@ -1,8 +1,7 @@
 import io
 from flask import Flask, Response, request
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
 import numpy as np
 
 app = Flask(__name__)
@@ -12,17 +11,12 @@ plt.rcParams["figure.autolayout"] = True
 
 
 @app.route("/")
-def hello_world():
-    return "<p> Hello World!</p>"
-
-
-@app.route("/info")
-def display_info():
-    return "This subpage is additional info"
+def start_page():
+    return "<p> Hello, to see quadratic plot use /plot</p>"
 
 
 @app.route('/plot')
-def plot_png():
+def plot():
     a = float(request.args.get('a', 1))
     b = float(request.args.get('b', 0))
     c = float(request.args.get('c', 0))
@@ -42,6 +36,7 @@ def plot_png():
     plt.ylim([ymin, ymax])
     plt.plot(x, y, 'r')
     plt.title("Quadratic function")
+
     output = io.BytesIO()
     FigureCanvas(fig).print_png(output)
     return Response(output.getvalue(), mimetype='image/png')
